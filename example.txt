@@ -1,0 +1,436 @@
+g++ -std=c++11 -fdiagnostics-color=always -g main.cpp -o main.exe
+./main
+
+a = 5
+b = 10
+
+Expected Assembly Output:
+
+PUSH 5
+POP a
+PUSH 10
+POP b
+-------------------------------------------
+x = 10
+y = x + 5
+z = y - 3
+
+Expected Assembly Output:
+
+PUSH 10
+POP x
+PUSH x
+PUSH 5
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP y
+PUSH y
+PUSH 3
+POP R1
+POP R2
+SUB R1, R2
+PUSH R1
+POP z
+-------------------------------------------------
+p = 2
+q = p + 3
+r = q - 1
+s = p + q + r
+
+Expected Assembly Output:
+
+PUSH 2
+POP p
+PUSH p
+PUSH 3
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP q
+PUSH q
+PUSH 1
+POP R1
+POP R2
+SUB R1, R2
+PUSH R1
+POP r
+PUSH p
+PUSH q
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+PUSH r
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP s
+----------------------------------------------
+m = 8
+n = m + 4 - 2
+o = n + m - 5
+
+Expected Assembly Output:
+
+PUSH 8
+POP m
+PUSH m
+PUSH 4
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+PUSH 2
+POP R1
+POP R2
+SUB R1, R2
+PUSH R1
+POP n
+PUSH n
+PUSH m
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+PUSH 5
+POP R1
+POP R2
+SUB R1, R2
+PUSH R1
+POP o
+-------------------------------------------------------
+a = 10
+b = 20
+if a < b:
+    c = a + b
+else:
+    c = a - b
+
+Expected Assembly Output:
+PUSH 10
+POP a
+PUSH 20
+POP b
+PUSH a
+PUSH b
+POP R1
+POP R2
+CMP R1, R2
+JL IF_BLOCK
+PUSH a
+PUSH b
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP c
+JMP END_IF
+IF_BLOCK:
+PUSH a
+PUSH b
+POP R1
+POP R2
+SUB R1, R2
+PUSH R1
+POP c
+END_IF:
+---------------------------------------------------
+i = 0
+while i < 5:
+    i = i + 1
+
+Expected Assembly Output:
+PUSH 0
+POP i
+LOOP_START:
+PUSH i
+PUSH 5
+POP R1
+POP R2
+CMP R1, R2
+JGE END_LOOP
+PUSH i
+PUSH 1
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP i
+JMP LOOP_START
+END_LOOP:
+----------------------------------------------------
+i = 0
+j = 0
+while i < 3:
+    j = 0
+    while j < 2:
+        j = j + 1
+    i = i + 1
+
+Expected Assembly Output:
+PUSH 0
+POP i
+PUSH 0
+POP j
+OUTER_LOOP:
+PUSH i
+PUSH 3
+POP R1
+POP R2
+CMP R1, R2
+JGE END_OUTER
+PUSH 0
+POP j
+INNER_LOOP:
+PUSH j
+PUSH 2
+POP R1
+POP R2
+CMP R1, R2
+JGE END_INNER
+PUSH j
+PUSH 1
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP j
+JMP INNER_LOOP
+END_INNER:
+PUSH i
+PUSH 1
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP i
+JMP OUTER_LOOP
+END_OUTER:
+------------------------------------
+def add(a, b):
+    return a + b
+
+x = add(5, 10)
+
+Expected Assembly Output:
+ADD_FUNC:
+PUSH ARG1
+PUSH ARG2
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+RET
+PUSH 5
+PUSH 10
+CALL ADD_FUNC
+POP x
+------------------------------------
+arr[0] = 5
+arr[1] = arr[0] + 10
+
+Expected Assembly Output:
+PUSH 5
+POP arr[0]
+PUSH arr[0]
+PUSH 10
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+POP arr[1]
+----------------------------------------------
+def add(a, b):
+    return a + b
+
+arr[0] = add(5, 10)
+arr[1] = arr[0] * 2
+
+add:
+PUSH a
+PUSH b
+POP R1
+POP R2
+ADD R1, R2
+PUSH R1
+RET
+
+PUSH 5
+PUSH 10
+CALL add
+POP R1
+PUSH 0
+POP R2
+STORE R1, arr[R2]
+
+PUSH 0
+LOAD R1, arr[R1]
+PUSH R1
+PUSH 2
+POP R1
+POP R2
+MUL R1, R2
+PUSH R1
+POP R1
+PUSH 1
+POP R2
+STORE R1, arr[R2]
+----------------------------------------
+def sum_array(arr, size):
+    total = 0
+    i = 0
+    while i < size:
+        total = total + arr[i]
+        i = i + 1
+    return total
+
+arr[0] = 5
+arr[1] = 10
+arr[2] = 15
+result = sum_array(arr, 3)
+
+sum_array:
+PUSH 0
+POP total
+PUSH 0
+POP i
+
+LOOP_0:
+PUSH i
+PUSH size
+POP R1
+POP R2
+CMP R1, R2
+JGE END_0
+
+PUSH i
+LOAD R1, arr[R1]
+PUSH total
+POP R2
+ADD R1, R2
+POP total
+
+PUSH i
+PUSH 1
+POP R1
+POP R2
+ADD R1, R2
+POP i
+
+JMP LOOP_0
+
+END_0:
+PUSH total
+RET
+
+PUSH 0
+PUSH 5
+POP R1
+POP R2
+STORE R1, arr[R2]
+
+PUSH 1
+PUSH 10
+POP R1
+POP R2
+STORE R1, arr[R2]
+
+PUSH 2
+PUSH 15
+POP R1
+POP R2
+STORE R1, arr[R2]
+
+PUSH arr
+PUSH 3
+CALL sum_array
+POP result
+
+------------------------------------
+def multiply(a, b):
+    return a * b
+
+def square(x):
+    return multiply(x, x)
+
+arr[0] = square(5)
+arr[1] = square(arr[0])
+
+multiply:
+PUSH a
+PUSH b
+POP R1
+POP R2
+MUL R1, R2
+PUSH R1
+RET
+
+square:
+PUSH x
+PUSH x
+CALL multiply
+POP R1
+PUSH R1
+RET
+
+PUSH 5
+CALL square
+POP R1
+PUSH 0
+POP R2
+STORE R1, arr[R2]
+
+PUSH 0
+LOAD R1, arr[R1]
+CALL square
+POP R1
+PUSH 1
+POP R2
+STORE R1, arr[R2]
+-------------------------------
+def multiply(a, b):
+    return a * b
+
+x = 5
+if x > 0:
+    arr[0] = multiply(x, 2)
+else:
+    arr[0] = 0
+
+multiply:
+PUSH a
+PUSH b
+POP R1
+POP R2
+MUL R1, R2
+POP R1
+RET
+PUSH 5
+POP x
+PUSH x
+PUSH 0
+POP R1
+POP R2
+GT R1, R2
+POP R1
+CMP R1, 0
+JZ ELSE_2
+PUSH x
+PUSH 2
+CALL multiply
+POP R1
+PUSH 0
+POP R2
+STORE R1, arr[R2]
+JMP END_2
+ELSE_2:
+PUSH 0
+PUSH 0
+POP R1
+POP R2
+STORE R1, arr[R2]
+END_2:
