@@ -399,118 +399,118 @@ class CodeGenerator {
 public:
     map<string, string> symbolTable;
 
-    void generateAssembly(vector<ASTNode*> statements) {
+    void generateAssembly(vector<ASTNode*> statements, ofstream& outFile) {
         for (ASTNode* stmt : statements) {
-            generate(stmt);
+            generate(stmt, outFile);
         }
     }
 
 private:
-void generate(ASTNode* node) {
+void generate(ASTNode* node, ofstream& outFile) {
     static int labelCount = 0;
 
     if (node == nullptr) return;
 
     if (node->type == "ASSIGN") {
-        generate(node->left);
-        cout << "POP " << node->value << endl;
+        generate(node->left, outFile);
+        outFile << "POP " << node->value << endl;
     }
     else if (node->type == "ARRAY_ASSIGN") {
         // Generate code for the index
-        generate(node->left);
+        generate(node->left, outFile);
         // Generate code for the value
-        generate(node->right);
-        cout << "POP R1" << endl; // Value to assign
-        cout << "POP R2" << endl; // Index
-        cout << "STORE R1, " << node->value << "[R2]" << endl; // Store value at array[index]
+        generate(node->right, outFile);
+        outFile << "POP R1" << endl; // Value to assign
+        outFile << "POP R2" << endl; // Index
+        outFile << "STORE R1, " << node->value << "[R2]" << endl; // Store value at array[index]
     }
     else if (node->type == "ARRAY_ACCESS") {
         // Generate code for the index
-        generate(node->left);
-        cout << "POP R1" << endl; // Index
-        cout << "LOAD R2, " << node->value << "[R1]" << endl; // Load value from array[index]
-        cout << "PUSH R2" << endl; // Push the value onto the stack
+        generate(node->left, outFile);
+        outFile << "POP R1" << endl; // Index
+        outFile << "LOAD R2, " << node->value << "[R1]" << endl; // Load value from array[index]
+        outFile << "PUSH R2" << endl; // Push the value onto the stack
     }
     else if (node->type == "NUMBER" || node->type == "IDENTIFIER") {
-        cout << "PUSH " << node->value << endl;
+        outFile << "PUSH " << node->value << endl;
     }
     else if (node->type == "+") {
-        generate(node->left);
-        generate(node->right);
-        cout << "POP R1\nPOP R2\nADD R1, R2\nPUSH R1" << endl;
+        generate(node->left, outFile);
+        generate(node->right, outFile), outFile;
+        outFile << "POP R1\nPOP R2\nADD R1, R2\nPUSH R1" << endl;
     }
     else if (node->type == "-") {
-        generate(node->left);
-        generate(node->right);
-        cout << "POP R1\nPOP R2\nSUB R1, R2\nPUSH R1" << endl;
+        generate(node->left, outFile);
+        generate(node->right, outFile);
+        outFile << "POP R1\nPOP R2\nSUB R1, R2\nPUSH R1" << endl;
     }
     else if (node->type == "IF") {
         int currentLabel = labelCount++;
-        generate(node->left);  // Condition evaluation
+        generate(node->left, outFile);  // Condition evaluation
 
-        cout << "POP R1" << endl;
-        cout << "CMP R1, 0" << endl;
-        cout << "JZ ELSE_" << currentLabel << endl;
+        outFile << "POP R1" << endl;
+        outFile << "CMP R1, 0" << endl;
+        outFile << "JZ ELSE_" << currentLabel << endl;
 
-        generate(node->right->left);  // If body
+        generate(node->right->left, outFile);  // If body
 
-        cout << "JMP END_" << currentLabel << endl;
-        cout << "ELSE_" << currentLabel << ":" << endl;
+        outFile << "JMP END_" << currentLabel << endl;
+        outFile << "ELSE_" << currentLabel << ":" << endl;
 
         if (node->right->right) {
-            generate(node->right->right);  // Else body
+            generate(node->right->right, outFile);  // Else body
         }
 
-        cout << "END_" << currentLabel << ":" << endl;
+        outFile << "END_" << currentLabel << ":" << endl;
     }
     else if (node->type == "WHILE") {
         int currentLabel = labelCount++;
-        cout << "LOOP_" << currentLabel << ":" << endl;
+        outFile << "LOOP_" << currentLabel << ":" << endl;
 
-        generate(node->left);  // Condition evaluation
+        generate(node->left, outFile);  // Condition evaluation
 
-        cout << "POP R1" << endl;
-        cout << "CMP R1, 0" << endl;
-        cout << "JZ END_" << currentLabel << endl;
+        outFile << "POP R1" << endl;
+        outFile << "CMP R1, 0" << endl;
+        outFile << "JZ END_" << currentLabel << endl;
 
-        generate(node->right);  // Body of the while loop
+        generate(node->right, outFile);  // Body of the while loop
 
-        cout << "JMP LOOP_" << currentLabel << endl;
-        cout << "END_" << currentLabel << ":" << endl;
+        outFile << "JMP LOOP_" << currentLabel << endl;
+        outFile << "END_" << currentLabel << ":" << endl;
     }
     else if (node->type == "FUNCTION") {
-        cout << node->value << ":" << endl; // Function label
-        generate(node->right); // Generate function body
-        cout << "RET" << endl; // Return from function
+        outFile << node->value << ":" << endl; // Function label
+        generate(node->right, outFile); // Generate function body
+        outFile << "RET" << endl; // Return from function
     }
     else if (node->type == "CALL") {
         // Push arguments onto the stack
         for (ASTNode* arg : node->right->children) {
-            generate(arg);
+            generate(arg, outFile);
         }
-        cout << "CALL " << node->value << endl; // Call the function
-        cout << "POP R1" << endl; // Pop the return value into a register
-        cout << "PUSH R1" << endl; // Push the return value onto the stack
+        outFile << "CALL " << node->value << endl; // Call the function
+        outFile << "POP R1" << endl; // Pop the return value into a register
+        outFile << "PUSH R1" << endl; // Push the return value onto the stack
     }
     else if (node->type == "RETURN") {
-        generate(node->left); // Generate code for the return expression
-        cout << "POP R1" << endl; // Pop the result into a register
-        cout << "RET" << endl; // Return from the function
+        generate(node->left, outFile); // Generate code for the return expression
+        outFile << "POP R1" << endl; // Pop the result into a register
+        outFile << "RET" << endl; // Return from the function
     }
     else if (node->type == "BLOCK") {
         for (ASTNode* child : node->children) {
-            generate(child);
+            generate(child, outFile);
         }
     }
     else if (node->type == "*") {
-        generate(node->left);
-        generate(node->right);
-        cout << "POP R1\nPOP R2\nMUL R1, R2\nPUSH R1" << endl;
+        generate(node->left, outFile);
+        generate(node->right, outFile);
+        outFile << "POP R1\nPOP R2\nMUL R1, R2\nPUSH R1" << endl;
     }
     else if (node->type == "/") {
-        generate(node->left);
-        generate(node->right);
-        cout << "POP R1\nPOP R2\nDIV R1, R2\nPUSH R1" << endl;
+        generate(node->left, outFile);
+        generate(node->right, outFile);
+        outFile << "POP R1\nPOP R2\nDIV R1, R2\nPUSH R1" << endl;
     }
 }
 
@@ -518,7 +518,7 @@ void generate(ASTNode* node) {
 
 // Main function
 int main() {
-    ifstream file("input.txt");
+    ifstream file("input.sl");
     if (!file) {
         cerr << "Error: Could not open input file.\n";
         return 1;
@@ -543,8 +543,17 @@ int main() {
 
     cout << "\nGenerated Assembly:\n";
     // Step 3: Code Generation
+    ofstream outFile("output.asm");
+    if (!outFile) {
+        cerr << "Error: Could not open output file for writing.\n";
+        return 1;
+    }
+    
     CodeGenerator generator;
-    generator.generateAssembly(ast);
+    generator.generateAssembly(ast, outFile);
 
+    outFile.close();
+
+    outFile << "Assembly output written to output.asm\n";
     return 0;
 }
