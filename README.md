@@ -1,50 +1,78 @@
-# Simple Language to x86-64 Compiler
+# Web-Based Simple Language Compiler IDE
 
-This repository contains a compiler that translates a simple programming language into x86-64 Linux assembly language. The compiler uses Top-Down Predictive Parsing to analyze and generate assembly code.
-
-## Features
-- Translates a simple language to x86-64 assembly.
-- Uses Top-Down Predictive Parsing for syntax analysis.
-- Generates assembly code compatible with Linux (NASM).
+This repository contains a web-based Integrated Development Environment (IDE) for a simple, custom programming language. It leverages Flask for the backend and JavaScript for the frontend to provide a user-friendly interface for writing and compiling code.
 
 ## Files
-- `main.cpp` – Compiler implementation.
-- `input.txt` – Contains simple language source code.
-- `example.txt` – Example input and corresponding assembly output.
 
-## Usage
-1. Compile the compiler:
-   ```sh
-   g++ -o compiler main.cpp
-   ```
-2. Run the compiler with an input file:
-   ```sh
-   ./compiler < input.txt > output.asm
-   ```
-3. Assemble and run the generated code:
-   ```sh
-   nasm -f elf64 output.asm -o output.o
-   gcc output.o -o output
-   ./output
-   ```
+* `main.cpp`: The C++ compiler that converts the simple language code into assembly.
+* `input.sl`: A sample input file (used for testing or examples).
+* `api.py`: The Flask application that serves as the backend API for the IDE.
+* `index.html`: The HTML file that defines the structure of the web-based IDE.
+* `styles.css`: The CSS file that styles the web-based IDE.
+* `script.js`: The JavaScript file that handles frontend interactions and API calls.
+* `image.png`: background image for the IDE.
 
-## Example
-**Input (`input.txt`):**
-```
-PRINT 5 + 3;
-```
-**Generated Assembly (`output.asm`):**
-```assembly
-section .text
-global _start
-_start:
-    mov rax, 8
-    call print_int
-    mov rax, 60
-    xor rdi, rdi
-    syscall
-```
+## Setup and Usage
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd <repository_name>
+    git checkout main
+    ```
+
+2.  **Install Flask and Flask-CORS:**
+    ```bash
+    pip install Flask flask-cors
+    ```
+
+3.  **Compile the C++ code:**
+    ```bash
+    g++ main.cpp -o a
+    ```
+
+4.  **Run the Flask application:**
+    ```bash
+    python api.py
+    ```
+
+5.  **Open the IDE:**
+    * Open your web browser and navigate to `http://127.0.0.1:5000`.
+
+## Features
+
+* **Web-Based IDE:** A user-friendly interface for writing and compiling code directly in the browser.
+* **Real-Time Compilation:** Code is compiled and assembly output is displayed instantly.
+* **Working Manual:** An integrated manual that provides instructions on how to use the simple language.
+* **Clear and Compile Buttons:** Easy-to-use buttons for clearing input/output and compiling code.
+* **Styled Interface:** A visually appealing interface with a background image and custom styling.
+* **GitHub Repository Link:** A link to the GitHub repository in the footer.
+
+## Language Features
+
+* **Variables:** Declare variables using identifiers (e.g., `a = 5`).
+* **Arithmetic Operations:** Use `+`, `-`, `*`, `/` for calculations.
+* **Relational Operators:** Use `<`, `>`, `<=`, `>=`, `==` for comparisons.
+* **Conditional Statements:** Use `if` and `else` for branching (e.g., `if a > 10: ... else: ...`).
+* **Loops:** Use `while` for loops (e.g., `while i < 5: ...`).
+* **Functions:** Define functions using `def` and return values using `return`.
+* **Arrays:** Access and assign values using `array[index]`.
+* **Function Calls:** Call defined function with arguments.
+
+## How It Works
+
+1.  **Input:** The user writes code in the input text area of the web IDE.
+2.  **Compilation Request:** When the user clicks the "Compile" button, JavaScript sends a POST request to the Flask backend (`api.py`).
+3.  **Backend Processing:**
+    * The Flask application receives the code, writes it to `input.sl`, and runs the compiled C++ executable (`./a`).
+    * The C++ compiler generates assembly code and writes it to `output.asm`.
+    * The Flask application reads the assembly code from `output.asm` and sends it back to the frontend.
+4.  **Output:** JavaScript displays the assembly code in the output text area.
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
 
 ## License
-This project is open-source and licensed under the MIT License.
 
+This project is licensed under the [MIT License](LICENSE).
