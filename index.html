@@ -1,33 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compiler IDE</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compiler IDE</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="tabs">
-    <button class="tab-button active" onclick="switchTab('ide-tab')">IDE</button>
-    <button class="tab-button" onclick="switchTab('second-tab')">Second Tab</button>
-  </div>
-
-  <div id="ide-tab" class="tab-content active">
-    <div class="ide-container">
-      <div class="editor">
-        <textarea id="input-code" placeholder="Enter your simple language code here..."></textarea>
-      </div>
-      <div class="output">
-        <pre id="output-assembly"></pre>
-      </div>
+    <div class="tabs">
+        <button class="tab-button active" onclick="switchTab('ide-tab')">IDE</button>
+        <button class="tab-button" onclick="switchTab('second-tab')">Manual</button>
     </div>
-    <button id="compile-button" onclick="compileCode()">Compile</button>
-  </div>
 
-  <div id="second-tab" class="tab-content">
-    <!-- Content for the second tab will go here -->
-  </div>
+    <div id="ide-tab" class="tab-content active">
+        <div class="ide-container">
+            <div class="editor">
+                <textarea id="input-code" placeholder="Enter your simple language code here..."></textarea>
+                <div class="button-container-editor">
+                    <button id="compile-button" onclick="compileCode()">Compile</button>
+                </div>
+            </div>
+            <div class="output">
+                <pre id="output-assembly"></pre>
+                <div class="button-container-output">
+                    <button id="clear-button" onclick="clearCode()">Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <div id="second-tab" class="tab-content">
+        <div class="manual-container">
+            <h1>Simple Language Compiler Manual</h1>
+            <p>Welcome to the working manual for our simple language compiler. This manual will guide you on how to write code and generate assembly output.</p>
+
+            <h2>Language Features</h2>
+            <ul>
+                <li><strong>Variables:</strong> Declare variables using identifiers (e.g., <code>a = 5</code>).</li>
+                <li><strong>Arithmetic Operations:</strong> Use <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> for calculations.</li>
+                <li><strong>Relational Operators:</strong> Use <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>==</code> for comparisons.</li>
+                <li><strong>Conditional Statements:</strong> Use <code>if</code> and <code>else</code> for branching (e.g., <code>if a &gt; 10: ... else: ...</code>).</li>
+                <li><strong>Loops:</strong> Use <code>while</code> for loops (e.g., <code>while i &lt; 5: ...</code>).</li>
+                <li><strong>Functions:</strong> Define functions using <code>def</code> and return values using <code>return</code>.</li>
+                <li><strong>Arrays:</strong> Access and assign values using <code>array[index]</code>.</li>
+                <li><strong>Function Calls:</strong> Call defined function with arguments.</li>
+            </ul>
+
+            <h2>Input Syntax</h2>
+            <p>Write your code in the input text area. Each statement should be on a new line.</p>
+
+            <h2>Example</h2>
+            <pre>
+                def add(a, b):
+                    return a + b
+
+                x = 5
+                y = 10
+                z = add(x, y)
+                if z > 12:
+                    a = 1;
+                else:
+                    a = 0;
+            </pre>
+
+            <h2>Assembly Output</h2>
+            <p>The generated assembly code will be displayed in the output text area. You can use this assembly code for further processing or analysis.</p>
+
+            <h2>How It Works</h2>
+            <p>The compiler works in three main stages:</p>
+            <ol>
+                <li><strong>Lexical Analysis (Lexer):</strong> Converts the source code into a stream of tokens.</li>
+                <li><strong>Syntax Analysis (Parser):</strong> Builds an Abstract Syntax Tree (AST) from the tokens.</li>
+                <li><strong>Code Generation:</strong> Generates assembly code from the AST.</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function clearCode() {
+            document.getElementById('input-code').value = '';
+            document.getElementById('output-assembly').textContent = '';
+        }
+    </script>
 </body>
 </html>

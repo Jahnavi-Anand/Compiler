@@ -6,16 +6,23 @@ body {
 
 .tabs {
   display: flex;
-  background-color: #333;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: transparent;
+  z-index: 100;
 }
 
 .tab-button {
-  flex: 1;
-  padding: 10px;
+  padding: 8px 15px;
   color: white;
   background-color: #555;
   border: none;
   cursor: pointer;
+  margin-right: 5px;
+  border-radius: 5px;
+  font-size: 14px;
 }
 
 .tab-button.active {
@@ -25,6 +32,7 @@ body {
 .tab-content {
   display: none;
   padding: 20px;
+  margin-top: 50px;
 }
 
 .tab-content.active {
@@ -40,31 +48,33 @@ body {
   flex: 1;
   padding: 10px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column; /* Stack textarea/pre and button container */
 }
 
-textarea {
-  width: 100%;
-  height: 100%;
+textarea, pre {
+  flex: 1; /* Allow textarea/pre to take up available space */
   font-family: monospace;
   font-size: 16px;
   background-color: #1e1e1e;
   color: #d4d4d4;
   border: none;
   resize: none;
+  width: 100%;
 }
 
 pre {
-  width: 100%;
-  height: 100%;
-  background-color: #1e1e1e;
-  color: #d4d4d4;
-  padding: 10px;
   overflow: auto;
   margin: 0;
 }
 
-#compile-button {
+.button-container-editor, .button-container-output {
+  display: flex;
+  justify-content: center; /* Center buttons horizontally */
   margin-top: 10px;
+}
+
+#compile-button, #clear-button {
   padding: 10px 20px;
   background-color: #4CAF50;
   color: white;
@@ -72,6 +82,45 @@ pre {
   cursor: pointer;
 }
 
-#compile-button:hover {
+#compile-button:hover, #clear-button:hover {
   background-color: #45a049;
+}
+
+#clear-button {
+  background-color: #f44336;
+}
+
+#clear-button:hover {
+  background-color: #d32f2f;
+}
+
+.manual-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #282828;
+  color: #d4d4d4;
+  border-radius: 8px;
+}
+
+.manual-container h1, .manual-container h2 {
+  color: #8be9fd;
+}
+
+.manual-container pre {
+  background-color: #3f3f3f;
+  padding: 10px;
+  overflow-x: auto;
+  border-radius: 5px;
+}
+
+.manual-container ul {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.manual-container ol {
+  margin-left: 20px;
 }
