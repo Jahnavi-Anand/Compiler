@@ -31,18 +31,20 @@ This repository contains a compiler that translates a simple programming languag
 ## Example
 **Input (`input.txt`):**
 ```
-PRINT 5 + 3;
+a = 5 + 3;
 ```
 **Generated Assembly (`output.asm`):**
 ```assembly
 section .text
 global _start
 _start:
-    mov rax, 8
-    call print_int
-    mov rax, 60
-    xor rdi, rdi
-    syscall
+    PUSH 5
+   PUSH 3
+   POP R1
+   POP R2
+   ADD R1, R2
+   PUSH R1
+   POP a
 ```
 
 ## License
