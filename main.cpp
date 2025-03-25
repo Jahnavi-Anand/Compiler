@@ -51,10 +51,6 @@ class Lexer {
                 else if (isdigit(source[pos])) {
                     tokens.push_back(number());
                 }
-                else if (source[pos] == '=') {
-                    tokens.push_back({"ASSIGN", "="});
-                    pos++;
-                }
                 else if (source[pos] == '+') {
                     tokens.push_back({"PLUS", "+"});
                     pos++;
@@ -63,25 +59,29 @@ class Lexer {
                     tokens.push_back({"MINUS", "-"});
                     pos++;
                 }
-                else if (source[pos] == '<') {
-                    tokens.push_back({"LT", "<"});
-                    pos++;
-                }
-                else if (source[pos] == '>') {
-                    tokens.push_back({"GT", ">"});
-                    pos++;
-                }
-                else if (source.substr(pos, 2) == "<=") {
+                else if (source.substr(pos, 2) == "<=") {  // Check for <= first
                     tokens.push_back({"LE", "<="});
                     pos += 2;
                 }
-                else if (source.substr(pos, 2) == ">=") {
+                else if (source.substr(pos, 2) == ">=") {  // Check for >= first
                     tokens.push_back({"GE", ">="});
                     pos += 2;
+                }
+                else if (source[pos] == '<') {  // Then check for single <
+                    tokens.push_back({"LT", "<"});
+                    pos++;
+                }
+                else if (source[pos] == '>') {  // Then check for single >
+                    tokens.push_back({"GT", ">"});
+                    pos++;
                 }
                 else if (source.substr(pos, 2) == "==") {
                     tokens.push_back({"EQ", "=="});
                     pos += 2;
+                }
+                else if (source[pos] == '=') {  // Then check for single =
+                    tokens.push_back({"ASSIGN", "="});
+                    pos++;
                 }
                 else if (source[pos] == ':') {
                     tokens.push_back({"COLON", ":"});
