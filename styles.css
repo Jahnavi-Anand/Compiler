@@ -102,35 +102,31 @@ pre {
   background-color: #d32f2f;
 }
 
+/* Manual container - makes it take full available space */
 .manual-container {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  line-height: 1.6;
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  height: calc(100vh - 150px); /* Adjust based on your header/footer */
+  margin: 0;
+  padding: 0;
   background-color: #282828;
-  color: #d4d4d4;
   border-radius: 8px;
+  overflow: hidden; /* Prevents any scrollbars */
 }
 
-.manual-container h1, .manual-container h2 {
-  color: #8be9fd;
+/* Wrapper for the PDF viewer */
+.pdf-viewer-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
 }
 
-.manual-container pre {
-  background-color: #3f3f3f;
-  padding: 10px;
-  overflow-x: auto;
-  border-radius: 5px;
-}
-
-.manual-container ul {
-  list-style-type: disc;
-  margin-left: 20px;
-}
-
-.manual-container ol {
-  margin-left: 20px;
+/* The actual PDF embed element */
+.pdf-embed {
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  border: none;
 }
 
 footer {
