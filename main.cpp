@@ -51,10 +51,6 @@ class Lexer {
                 else if (isdigit(source[pos])) {
                     tokens.push_back(number());
                 }
-                else if (source[pos] == '=') {
-                    tokens.push_back({"ASSIGN", "="});
-                    pos++;
-                }
                 else if (source[pos] == '+') {
                     tokens.push_back({"PLUS", "+"});
                     pos++;
@@ -63,25 +59,29 @@ class Lexer {
                     tokens.push_back({"MINUS", "-"});
                     pos++;
                 }
-                else if (source[pos] == '<') {
-                    tokens.push_back({"LT", "<"});
-                    pos++;
-                }
-                else if (source[pos] == '>') {
-                    tokens.push_back({"GT", ">"});
-                    pos++;
-                }
-                else if (source.substr(pos, 2) == "<=") {
+                else if (source.substr(pos, 2) == "<=") {  // Check for <= first
                     tokens.push_back({"LE", "<="});
                     pos += 2;
                 }
-                else if (source.substr(pos, 2) == ">=") {
+                else if (source.substr(pos, 2) == ">=") {  // Check for >= first
                     tokens.push_back({"GE", ">="});
                     pos += 2;
+                }
+                else if (source[pos] == '<') {  // Then check for single <
+                    tokens.push_back({"LT", "<"});
+                    pos++;
+                }
+                else if (source[pos] == '>') {  // Then check for single >
+                    tokens.push_back({"GT", ">"});
+                    pos++;
                 }
                 else if (source.substr(pos, 2) == "==") {
                     tokens.push_back({"EQ", "=="});
                     pos += 2;
+                }
+                else if (source[pos] == '=') {  // Then check for single =
+                    tokens.push_back({"ASSIGN", "="});
+                    pos++;
                 }
                 else if (source[pos] == ':') {
                     tokens.push_back({"COLON", ":"});
@@ -247,21 +247,21 @@ class Parser {
     
             // Handle relational operators
             if (pos < tokens.size() && (tokens[pos].type == "LT" || tokens[pos].type == "GT" ||
-                                        tokens[pos].type == "LE" || tokens[pos].type == "GE" ||
-                                        tokens[pos].type == "EQ")) {
+                tokens[pos].type == "LE" || tokens[pos].type == "GE" ||
+                tokens[pos].type == "EQ")) {
                 string op = tokens[pos++].value;
                 ASTNode* right = term();
                 left = new ASTNode(op, "", left, right);
             }
-    
+        
             // Handle arithmetic expressions after relational operators (optional)
             while (pos < tokens.size() && (tokens[pos].type == "PLUS" || tokens[pos].type == "MINUS" ||
-                                           tokens[pos].type == "MULTIPLY" || tokens[pos].type == "DIVIDE")) {
+                tokens[pos].type == "MULTIPLY" || tokens[pos].type == "DIVIDE")) {
                 string op = tokens[pos++].value;
                 ASTNode* right = term();
                 left = new ASTNode(op, "", left, right);
             }
-    
+        
             return left;
         }
     
@@ -293,6 +293,7 @@ class Parser {
     
                 return new ASTNode("IF", "", condition, new ASTNode("BLOCK", "", ifBody, elseBody));
             }
+            
             else if (tokens[pos].type == "WHILE") {
                 pos++; // Move past "while"
                 ASTNode* condition = expression(); // Parse condition
@@ -511,6 +512,12 @@ void generate(ASTNode* node) {
         generate(node->left);
         generate(node->right);
         cout << "POP R1\nPOP R2\nDIV R1, R2\nPUSH R1" << endl;
+    }
+    else if (node->type == "LE") {
+        generate(node->left);
+        generate(node->right);
+        cout << "POP R1\nPOP R2\nCMP R2, R1\nJLE TRUE_" << labelCount << "\nPUSH 0\nJMP END_" << labelCount << "\nTRUE_" << labelCount << ":\nPUSH 1\nEND_" << labelCount << ":" << endl;
+        labelCount++;
     }
 }
 
