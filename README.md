@@ -17,7 +17,7 @@ This repository contains a web-based Integrated Development Environment (IDE) fo
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/Jahnavi-Anand/Compiler.git
-    cd compiler
+    cd Compiler
     git checkout main
     ```
 
