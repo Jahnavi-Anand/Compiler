@@ -2,7 +2,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-image: url('image.png'); 
+  background-color:#555; 
   background-size: cover; 
   background-repeat: no-repeat; 
   background-attachment: fixed; 
@@ -12,14 +12,24 @@ body {
   min-height: 100vh;
 }
 
+header {
+  background-color: #333; /* Darker background for header */
+  padding: 10px 0;
+  width: 100%;
+  height: 40px;
+  position: relative; 
+}
+
 .tabs {
   display: flex;
+  flex-direction: row;
   position: absolute;
-  top: 35px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   background-color: transparent;
   z-index: 100;
+  gap: 20px;
 }
 
 .tab-button {
@@ -28,13 +38,17 @@ body {
   background-color: #555;
   border: none;
   cursor: pointer;
-  margin-right: 5px;
+  margin-right: 5;
   border-radius: 5px;
   font-size: 14px;
 }
 
 .tab-button.active {
   background-color: #777;
+}
+
+.tab-button:hover{
+  background-color: #000000;
 }
 
 .tab-content {
@@ -45,6 +59,14 @@ body {
 
 .tab-content.active {
   display: block;
+}
+
+h2{
+  font-size: 24px;
+  color: white;
+  text-align: center;
+  padding-top: 20px;
+  margin-bottom: 0px;
 }
 
 .ide-container {
@@ -144,4 +166,37 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+.parser-container {
+    display: flex;
+    height: 80vh;
+    padding-top: 0;
+}
+
+.lexer-output, .parser-output {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.lexer-output pre, .parser-output pre {
+    flex: 1;
+    font-family: monospace;
+    font-size: 16px;
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    border: none;
+    resize: none;
+    width: 100%;
+    overflow: auto;
+    margin: 0;
+}
+
+.lexer-output h2, .parser-output h2 {
+  margin-bottom: 5px; /* Reduce bottom margin */
+  margin-top: 3px; /* Reduce top margin */
+  padding-top: 5px; /* reduce padding top, further */
 }

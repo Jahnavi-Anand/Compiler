@@ -3,7 +3,9 @@ from flask_cors import CORS
 import subprocess
 import os
 import traceback
+import json
 import time
+import re
 
 app = Flask(__name__)
 CORS(app)
@@ -40,7 +42,52 @@ def compile_code():
         with open('output.asm', 'r') as f:
             assembly = f.read()
         print("output file read")
-        return jsonify({'assembly': assembly})
+
+        # Parse tokenization and AST output
+        stdout_str = result.stdout.encode('utf-8', errors='replace').decode('utf-8') #add encoding.
+        stdout_str = re.sub(r'[^\x20-\x7E\n]', '?', stdout_str) # replace non-printable characters.
+        output_lines = stdout_str.splitlines()
+
+        print("Raw stdout (encoded):", stdout_str) # debug
+
+        try:
+            tokens_start = output_lines.index("Tokens:") + 1
+            print(f"Tokens start index: {tokens_start}") #debug
+        except ValueError:
+            print("Tokens: line not found in output")
+            return jsonify({'error': "Tokens line not found in compiler output."}), 500
+
+        try:
+            ast_start = output_lines.index("AST:") + 1
+        except ValueError:
+            print("AST: line not found in output")
+            return jsonify({'error': "AST line not found in compiler output."}), 500
+
+        try:
+            assembly_start = output_lines.index("Generated Assembly:") + 1
+        except ValueError:
+            print("Generated Assembly: line not found in output")
+            return jsonify({'error': "Generated Assembly line not found in compiler output."}), 500
+
+        tokens_data = []
+        for line in output_lines[tokens_start:ast_start - 1]:
+            line = line.strip().rstrip(',')
+            if line:
+                try:
+                    #manual parse.
+                    type_val = re.findall(r'"type":\s*"([^"]+)"', line)[0]
+                    value_val = re.findall(r'"value":\s*"([^"]+)"', line)[0]
+                    tokens_data.append({"type": type_val, "value": value_val})
+                except Exception as e:
+                    print(f"Error manual parsing line: {line}, error: {e}")
+                    pass
+
+        print(f"Tokens data: {tokens_data}") #debug
+        print(f"Tokens data type: {type(tokens_data)}") #debug
+
+        ast_data = "\n".join(output_lines[ast_start:assembly_start - 1])
+
+        return jsonify({'assembly': assembly, 'lexerOutput': tokens_data, 'parserOutput': ast_data})
 
     except Exception as e:
         print(f"Error in /compile: {e}")

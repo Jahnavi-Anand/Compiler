@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <map>
+#include <iomanip>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ class Lexer {
         vector<Token> tokenize() {
             vector<Token> tokens;
             while (pos < source.length()) {
+                cout << "Current pos: " << pos << ", current char: " << source[pos] << endl;
                 if (isspace(source[pos])) {
                     pos++;
                     continue;
@@ -119,6 +121,8 @@ class Lexer {
                     cout << "Unknown character: " << source[pos] << endl;
                     exit(1);
                 }
+                cout << "Token Vector Size: " << tokens.size() << endl; //debug
+
             }
             return tokens;
         }
@@ -513,8 +517,23 @@ void generate(ASTNode* node, ofstream& outFile) {
         outFile << "POP R1\nPOP R2\nDIV R1, R2\nPUSH R1" << endl;
     }
 }
-
 };
+
+void printAST(ASTNode* node, int indent = 0) {
+    if (node == nullptr) return;
+
+    cout << setw(indent) << "" << node->type; // Use setw from iomanip
+    if (!node->value.empty()) {
+        cout << " (" << node->value << ")";
+    }
+    cout << endl;
+
+    if (node->left) printAST(node->left, indent + 2);
+    if (node->right) printAST(node->right, indent + 2);
+    for (ASTNode* child : node->children) {
+        printAST(child, indent + 2);
+    }
+}
 
 // Main function
 int main() {
@@ -533,13 +552,19 @@ int main() {
     vector<Token> tokens = lexer.tokenize();
 
     cout << "Tokens:\n";
+    cout << "Token Vector Size: " << tokens.size() << endl; // Debugging
     for (const auto& token : tokens) {
-        cout << token.type << " -> " << token.value << endl;
+        cout << "{ \"type\": \"" << token.type << "\", \"value\": \"" << token.value << "\" }," << endl;
     }
 
     // Step 2: Parsing
     Parser parser(tokens);
     vector<ASTNode*> ast = parser.parse();
+
+    cout << "\nAST:\n";
+    for(ASTNode* node : ast){
+        printAST(node);
+    }
 
     cout << "\nGenerated Assembly:\n";
     // Step 3: Code Generation

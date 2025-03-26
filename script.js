@@ -14,15 +14,35 @@ function compileCode() {
     })
     .then((data) => {
         console.log("Fetch data:", data);
+
         if (data.assembly) {
             document.getElementById('output-assembly').textContent = data.assembly;
+
+            // Display lexerOutput as formatted JSON:
+            if (data.lexerOutput && Array.isArray(data.lexerOutput)) {
+                try {
+                    const lexerOutputString = JSON.stringify(data.lexerOutput, null, 2); // Format JSON
+                    document.getElementById('lexer-output-display').textContent = lexerOutputString;
+                } catch (e) {
+                    console.error("Error stringifying lexer output:", e);
+                    document.getElementById('lexer-output-display').textContent = "Error displaying lexer output.";
+                }
+            } else {
+                document.getElementById('lexer-output-display').textContent = "No lexer output or invalid format.";
+            }
+
+            document.getElementById('parser-output-display').textContent = data.parserOutput || "No parser output.";
         } else {
             document.getElementById('output-assembly').textContent = 'Error: ' + data.error;
+            document.getElementById('lexer-output-display').textContent = '';
+            document.getElementById('parser-output-display').textContent = '';
         }
     })
     .catch((error) => {
         console.error("Fetch error:", error);
-        document.getElementById('output-assembly').textContent = 'Error: ' + error;
+        document.getElementById('output-assembly').textContent = 'Error: ' + error.message;
+        document.getElementById('lexer-output-display').textContent = '';
+        document.getElementById('parser-output-display').textContent = '';
     });
 }
 
@@ -95,4 +115,11 @@ function switchTab(tabId) {
             </div>
         `;
     }
+}
+
+function clearCode() {
+    document.getElementById('input-code').value = '';
+    document.getElementById('output-assembly').textContent = '';
+    document.getElementById('lexer-output-display').textContent = '';
+    document.getElementById('parser-output-display').textContent = '';
 }
