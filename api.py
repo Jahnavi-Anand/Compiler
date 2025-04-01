@@ -36,7 +36,7 @@ def compile_code():
             time.sleep(0.1)  # Wait for 100 milliseconds
             file_size = os.path.getsize('output.asm')
             if file_size == 0:
-                print("Output file still empty. Returning error.")
+                print("Output file still empty. Returning error.") 
                 return jsonify({'error': "Assembly output file is empty or not generated."}), 500
 
         with open('output.asm', 'r') as f:
