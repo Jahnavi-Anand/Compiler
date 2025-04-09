@@ -91,6 +91,7 @@ h2{
 .ide-container {
   display: flex;
   height: 80vh;
+  margin-top: -50px;
 }
 
 .editor, .output {
@@ -146,12 +147,12 @@ pre {
 /* Manual container - makes it take full available space */
 .manual-container {
   width: 100%;
-  height: calc(100vh - 150px); /* Adjust based on your header/footer */
-  margin: 0;
+  height: calc(100vh - 150px); 
   padding: 0;
   background-color: #282c34;
   border-radius: 8px;
   overflow: hidden; /* Prevents any scrollbars */
+  margin-top: -50px;
 }
 
 /* Wrapper for the PDF viewer */
@@ -199,6 +200,7 @@ footer a:hover {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    margin-top: -60px;
 }
 
 .lexer-output pre, .parser-output pre {
